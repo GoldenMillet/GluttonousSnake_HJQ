@@ -101,7 +101,7 @@ void show(BODY* s_head, FOOD* f_head) {
 	}
 }
 
-void updateWithoutInput(BODY** s_head, FOOD** f_head, int* accumulate) {
+void updateWithoutInput(BODY** s_head, FOOD** f_head, int* accumulate, char* currentV) {
 
 	//	虵所有关节的移动
 	for (BODY* i = *s_head; i->next; i = i->next)
@@ -170,30 +170,39 @@ void updateWithoutInput(BODY** s_head, FOOD** f_head, int* accumulate) {
 			exit(0);
 		}
 	}
+	
+	//	移动
+	switch (*currentV)
+	{
+	case 'a':
+		((*s_head)->x) = ((*s_head)->x) - 3;
+		break;
+	case 'd':
+		((*s_head)->x) = ((*s_head)->x) + 3;
+		break;
+	case 'w':
+		((*s_head)->y) = ((*s_head)->y) - 3;
+		break;
+	case 's':
+		((*s_head)->y) = ((*s_head)->y) + 3;
+		break;
+	default:
+		break;
+	}
 }
 
-void updateWithInput(BODY* s_head) {
-	char kb_in;
+void updateWithInput(BODY* s_head, char* currentV) {
+	
+	//	控制方向
+	char chInput = '0';
 	if (_kbhit())
 	{
-		kb_in = _getch();
-		switch (kb_in)
-		{
-		case 'a':
-			(s_head->x) = (s_head->x) - 3;
-			break;
-		case 'd':
-			(s_head->x) = (s_head->x) + 3;
-			break;
-		case 'w':
-			(s_head->y) = (s_head->y) - 3;
-			break;
-		case 's':
-			(s_head->y) = (s_head->y) + 3;
-			break;
-		default:
-			break;
-		}
+		chInput = _getch();
+	}
+
+	//	判定键盘输入是有效的
+	if (chInput == 'a' || chInput == 's' || chInput == 'd' || chInput == 'w') {
+		*currentV = chInput;
 	}
 }
 
@@ -228,8 +237,8 @@ BODY* generatebody(BODY* head) {
 	BODY* p = (BODY*)malloc(sizeof(BODY));
 	last->next = p;
 	p->color = BLUE;
-	p->x = START_SNAKE_X;
-	p->y = START_SNAKE_Y;
+	p->x = last->x;
+	p->y = last->y;
 	p->r = START_SNAKE_R;
 	p->next = NULL;
 

@@ -9,13 +9,14 @@ int main(void) {
 	BODY* s_head = NULL;
 	FOOD* f_head = NULL;
 	int accumulate = 0;
+	char currentV = '0';
 
 	//	º¯Êý
 	startup(&s_head, &f_head);
 	while (1) {
 		show(s_head, f_head);
-		updateWithoutInput(&s_head, &f_head, &accumulate);
-		updateWithInput(s_head);
+		updateWithoutInput(&s_head, &f_head, &accumulate, &currentV);
+		updateWithInput(s_head, &currentV);
 		
 		FlushBatchDraw();
 		//cleardevice();
