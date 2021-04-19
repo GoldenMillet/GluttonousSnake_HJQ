@@ -10,18 +10,20 @@ int main(void) {
 	FOOD* f_head = NULL;
 	int accumulate = 0;
 	char currentV = '0';
+	unsigned int time = 0;
 
 	//	º¯Êý
+	//BeginBatchDraw();
 	startup(&s_head, &f_head);
 	while (1) {
-		show(s_head, f_head);
-		updateWithoutInput(&s_head, &f_head, &accumulate, &currentV);
+		show(&time, s_head, f_head);
+		updateWithoutInput(&time, &s_head, &f_head, &accumulate, &currentV);
 		updateWithInput(s_head, &currentV);
 		
 		FlushBatchDraw();
-		//cleardevice();
 		Sleep(10);
 	}
 
+	EndBatchDraw();
 	return 0;
 }

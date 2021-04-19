@@ -1,4 +1,5 @@
 #include <graphics.h>
+#include <stdio.h>
 #include <conio.h>
 #include "mainlevel.h"
 
@@ -14,6 +15,8 @@
 
 FOOD* generatefood(FOOD* const head);
 BODY* generatebody(BODY* head);
+void setFoodColour(FOOD* food);
+void pauseGame(void);
 
 void startup(BODY** s_head, FOOD** f_head) {
 	closegraph();
@@ -27,8 +30,7 @@ void startup(BODY** s_head, FOOD** f_head) {
 		//	初始化虵
 		if (p == *s_head) {
 			p->color = GREEN;
-		}
-		else {
+		} else {
 			p->color = BLUE;
 		}
 		p->x = START_SNAKE_X;
@@ -54,10 +56,10 @@ void startup(BODY** s_head, FOOD** f_head) {
 		FOOD* p = (FOOD*)malloc(sizeof(FOOD));
 
 		//	初始化
-		p->color = RED;
+		setFoodColour(p);
 		p->x = rand() % GAME_WIDE;
 		p->y = rand() % GAME_HIGH;
-		p->r = 2;
+		p->r = 3;
 		p->state = canEat;
 		p->next = NULL;
 
@@ -75,7 +77,7 @@ void startup(BODY** s_head, FOOD** f_head) {
 
 }
 
-void show(BODY* s_head, FOOD* f_head) {
+void show(unsigned int* time, BODY* s_head, FOOD* f_head) {
 
 	IMAGE background;
 	loadimage(&background, _T(".\\pic\\bg.jpg"));
@@ -94,14 +96,24 @@ void show(BODY* s_head, FOOD* f_head) {
 	for (FOOD* i = f_head; i; i = i->next)
 	{
 		if (i->state == canEat) {
-			setcolor(BLACK);
+			setcolor(i->color);
 			setfillcolor(i->color);
 			fillcircle(i->x, i->y, i->r);
 		}
 	}
+
+	//	显示时间
+	char nameBuffer[20];
+	sprintf_s(nameBuffer, "存活时间：%d", (*time)/50);
+	settextcolor(BLACK);
+	settextstyle(20, 0, _T("宋体"));
+	outtextxy(0, 0, nameBuffer);
+
+	//	其他信息
+	outtextxy(0, 25, "按P键暂停/解除暂停");
 }
 
-void updateWithoutInput(BODY** s_head, FOOD** f_head, int* accumulate, char* currentV) {
+void updateWithoutInput(unsigned int* time, BODY** s_head, FOOD** f_head, int* accumulate, char* currentV) {
 
 	//	虵所有关节的移动
 	for (BODY* i = *s_head; i->next; i = i->next)
@@ -189,6 +201,10 @@ void updateWithoutInput(BODY** s_head, FOOD** f_head, int* accumulate, char* cur
 	default:
 		break;
 	}
+
+	//	时间流动
+	Sleep(1);
+	(*time)++;
 }
 
 void updateWithInput(BODY* s_head, char* currentV) {
@@ -198,6 +214,14 @@ void updateWithInput(BODY* s_head, char* currentV) {
 	if (_kbhit())
 	{
 		chInput = _getch();
+		switch (chInput)
+		{
+		case 'p':
+			pauseGame();
+			break;
+		default:
+			break;
+		}
 	}
 
 	//	判定键盘输入是有效的
@@ -219,7 +243,7 @@ FOOD* generatefood(FOOD* head) {
 	p->color = RED;
 	p->x = rand() % GAME_WIDE;
 	p->y = rand() % GAME_HIGH;
-	p->r = 2;
+	p->r = 3;
 	p->state = canEat;
 	p->next = NULL;
 
@@ -236,11 +260,35 @@ BODY* generatebody(BODY* head) {
 	//	制造节点
 	BODY* p = (BODY*)malloc(sizeof(BODY));
 	last->next = p;
-	p->color = BLUE;
+	if (p == head) {
+		p->color = GREEN;
+	}
+	else {
+		p->color = BLUE;
+	}
 	p->x = last->x;
 	p->y = last->y;
 	p->r = START_SNAKE_R;
 	p->next = NULL;
 
 	return head;
+}
+
+void pauseGame(void) {
+	while (true) {
+		char chInput;
+		if (_kbhit()) {
+			chInput = _getch();
+			if (chInput == 'p') {
+				break;
+			}
+		}
+	}
+}
+
+void setFoodColour(FOOD* food) {
+	int red = rand() % 256;
+	int green = rand() % 256;
+	int blue = rand() % 256;
+	food->color = RGB(red, green, blue);
 }

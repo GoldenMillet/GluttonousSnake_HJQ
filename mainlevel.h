@@ -27,6 +27,6 @@ typedef struct _food {
 
 //	ÓÎÏ·º¯Êý
 void startup(BODY** s_head, FOOD** f_head);
-void show(BODY* s_head, FOOD* f_head);
-void updateWithoutInput(BODY** s_head, FOOD** f_head, int* accumulate, char* currentV);
+void show(unsigned int* time, BODY* s_head, FOOD* f_head);
+void updateWithoutInput(unsigned int* time, BODY** s_head, FOOD** f_head, int* accumulate, char* currentV);
 void updateWithInput(BODY* s_head, char* currentV);
